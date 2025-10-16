@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Meeting Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-navy: #0A2540;
+            --primary-slate: #4A5568;
+            --primary-gold: #D4AF37;
+            --light-bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary-navy);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            width: 240px;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 0 25px 25px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 4px solid var(--primary-gold);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+        
+        .top-navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .summary-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-gold);
+            border-radius: 4px;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-draft { background-color: #cbd5e0; color: #4a5568; }
+        .badge-published { background-color: #93c5fd; color: #1e40af; }
+        .badge-closed { background-color: #86efac; color: #166534; }
+        
+        .btn-gold {
+            background-color: var(--primary-gold);
+            color: var(--primary-navy);
+            border: none;
+            font-weight: 600;
+        }
+        
+        .btn-gold:hover {
+            background-color: #b8952a;
+            color: white;
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--primary-slate);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            margin-right: 5px;
+            border-radius: 6px;
+        }
+        
+        .btn-view { background-color: #dbeafe; color: #1d4ed8; }
+        .btn-edit { background-color: #dcfce7; color: #16a34a; }
+        .btn-close { background-color: #fee2e2; color: #dc2626; }
+        .btn-report { background-color: #ede9fe; color: #7c3aed; }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-slate);
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #cbd5e1;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 180px;
+            }
+            .main-content {
+                margin-left: 180px;
+                padding: 15px;
+            }
+            .summary-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="text-center mb-4">
+            <h5 class="text-white">GovMeet Admin</h5>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard" data-view="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#meetings" data-view="meetings">
+                    <i class="fas fa-calendar-alt"></i> Meetings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#registrations" data-view="registrations">
+                    <i class="fas fa-users"></i> Registrations
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#reports" data-view="reports">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Admin Dashboard</h4>
+            <div class="d-flex align-items-center">
+                <small class="text-muted me-3">Last login: Oct 16, 2025 – 10:30 AM</small>
+                <span class="fw-bold">Admin User</span>
+                <button class="btn btn-outline-secondary ms-3">Logout</button>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard" class="view-content">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-calendar-alt fa-2x text-primary me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Upcoming Meetings</h6>
+                                <small class="text-muted">Next meeting details</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>Budget Review</strong> – Oct 22, 2025, 10:00 AM</p>
+                        <small class="text-muted">3 meetings scheduled this week</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-users fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Registration Summary</h6>
+                                <small class="text-muted">Current registration status</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>42 total registrations</strong></p>
+                        <small class="text-muted">28 confirmed, 14 pending</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle fa-2x text-info me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Recent Attendance</h6>
+                                <small class="text-muted">Last meeting attendance</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>Q3 Planning – 92% attendance (38/42)</strong></p>
+                        <button class="btn btn-sm btn-outline-primary mt-2">View Report</button>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-bolt fa-2x text-warning me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Quick Actions</h6>
+                                <small class="text-muted">Frequently used actions</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-gold w-100 mb-2">+ Create Meeting</button>
+                        <button class="btn btn-outline-secondary w-100">📊 Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meetings View -->
+        <div id="meetings" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Manage Meetings</h4>
+                <button class="btn btn-gold" id="createMeetingBtn">+ Create New Meeting</button>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option>All Status</option>
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Closed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option>Last 30 days</option>
+                                <option>Last 7 days</option>
+                                <option>This month</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date & Time</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Registrations</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Budget Review Q4</td>
+                                    <td>Oct 22, 2025, 10:00 AM</td>
+                                    <td>Conference Room B</td>
+                                    <td><span class="status-badge badge-published">Published</span></td>
+                                    <td>28 / 50</td>
+                                    <td>
+                                        <button class="btn action-btn btn-view">View</button>
+                                        <button class="btn action-btn btn-edit">Edit</button>
+                                        <button class="btn action-btn btn-close">Close</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Q3 Planning</td>
+                                    <td>Sep 15, 2025, 2:00 PM</td>
+                                    <td>Main Auditorium</td>
+                                    <td><span class="status-badge badge-closed">Closed</span></td>
+                                    <td>38 / 42</td>
+                                    <td>
+                                        <button class="btn action-btn btn-view">View</button>
+                                        <button class="btn action-btn btn-report">Report</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Meeting Form (Modal) -->
+        <div class="modal fade" id="createMeetingModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Meeting</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Meeting Title *</label>
+                                <input type="text" class="form-control" placeholder="e.g., Annual Policy Review">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Agenda *</label>
+                                <textarea class="form-control" rows="4" placeholder="List key discussion points..."></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date & Time *</label>
+                                    <input type="datetime-local" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Duration</label>
+                                    <select class="form-select">
+                                        <option>30 min</option>
+                                        <option selected>1 hour</option>
+                                        <option>1.5 hours</option>
+                                        <option>2 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location *</label>
+                                <input type="text" class="form-control" placeholder="e.g., Conference Room B, Central Secretariat">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Ministry (Optional)</label>
+                                    <select class="form-select">
+                                        <option>Select Ministry</option>
+                                        <option>Ministry of Finance</option>
+                                        <option>Ministry of Health</option>
+                                        <option>Ministry of Education</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Department (Optional)</label>
+                                    <select class="form-select">
+                                        <option>Select Department</option>
+                                        <option>Budget Division</option>
+                                        <option>Health Services</option>
+                                        <option>Academic Affairs</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Save as Draft</button>
+                        <button type="button" class="btn btn-gold">Publish Meeting</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registrations View -->
+        <div id="registrations" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Registration Progress</h4>
+                <button class="btn btn-outline-secondary">Export to CSV</button>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Meeting</label>
+                        <select class="form-select">
+                            <option>Budget Review Q4 (Oct 22, 2025)</option>
+                            <option>Q3 Planning (Sep 15, 2025)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Registration Progress for: Budget Review Q4</h6>
+                        <div class="progress-bar-custom mb-2">
+                            <div class="progress-bar-fill" style="width: 56%"></div>
+                        </div>
+                        <small class="text-muted">28 of 50 expected officers registered (56%)</small>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Search by name...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option>All Ministries</option>
+                                <option>Ministry of Finance</option>
+                                <option>Ministry of Health</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option>All Departments</option>
+                                <option>Budget Division</option>
+                                <option>Health Services</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Officer Name</th>
+                                    <th>Ministry</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>Registered</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Rajesh Kumar</td>
+                                    <td>Ministry of Finance</td>
+                                    <td>Budget Division</td>
+                                    <td>Deputy Secretary</td>
+                                    <td>rajesh.kumar@finance.gov.in</td>
+                                    <td>+91 98765 43210</td>
+                                    <td>Oct 18, 2025, 2:15 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Priya Sharma</td>
+                                    <td>Ministry of Health</td>
+                                    <td>Health Services</td>
+                                    <td>Under Secretary</td>
+                                    <td>priya.sharma@health.gov.in</td>
+                                    <td>+91 87654 32109</td>
+                                    <td>Oct 17, 2025, 11:30 AM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports View -->
+        <div id="reports" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Attendance Reports</h4>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Closed Meeting</label>
+                        <select class="form-select">
+                            <option>Q3 Planning (Sep 15, 2025)</option>
+                            <option>Annual Review (Aug 10, 2025)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="summary-card mb-4">
+                        <h6>Attendance Summary</h6>
+                        <p><strong>Q3 Planning – Sep 15, 2025</strong></p>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="mb-1"><strong>Total Registered:</strong> 42</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-success"><strong>Attended:</strong> 38 ✅</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-danger"><strong>Absent:</strong> 4 ❌</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1"><strong>Attendance Rate:</strong> 90.5%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex mb-4">
+                        <button class="btn btn-outline-primary me-2">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-file-csv me-2"></i>Export CSV
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Officer Name</th>
+                                    <th>Ministry</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Rajesh Kumar</td>
+                                    <td>Ministry of Finance</td>
+                                    <td>Budget Division</td>
+                                    <td>Deputy Secretary</td>
+                                    <td><span class="text-success">✅ Present</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Priya Sharma</td>
+                                    <td>Ministry of Health</td>
+                                    <td>Health Services</td>
+                                    <td>Under Secretary</td>
+                                    <td><span class="text-success">✅ Present</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Amit Patel</td>
+                                    <td>Ministry of Education</td>
+                                    <td>Academic Affairs</td>
+                                    <td>Joint Secretary</td>
+                                    <td><span class="text-danger">❌ Absent</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Navigation handling
+            $('.nav-link').on('click', function(e) {
+                e.preventDefault();
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+                
+                const view = $(this).data('view');
+                $('.view-content').addClass('d-none');
+                $('#' + view).removeClass('d-none');
+            });
+            
+            // Create Meeting button
+            $('#createMeetingBtn').on('click', function() {
+                $('#createMeetingModal').modal('show');
+            });
+            
+            // Quick Actions in Dashboard
+            $('.summary-card .btn-outline-primary').on('click', function() {
+                $('.nav-link').removeClass('active');
+                $('.nav-link[data-view="reports"]').addClass('active');
+                $('.view-content').addClass('d-none');
+                $('#reports').removeClass('d-none');
+            });
+            
+            $('.summary-card .btn-gold').on('click', function() {
+                $('#createMeetingModal').modal('show');
+            });
+            
+            // Export buttons
+            $('.btn-outline-secondary').on('click', function() {
+                alert('Export functionality would be implemented with backend integration.');
+            });
+            
+            $('.btn-outline-primary').on('click', function() {
+                alert('PDF export would generate official attendance certificate.');
+            });
+        });
+    </script>
+</body>
+</html>
