@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Meeting Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tom Select CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css">
+    <style>
+        :root {
+            --primary-navy: #0A2540;
+            --primary-slate: #4A5568;
+            --primary-bg: #a2aeeb;
+            --primary-gold: #D4AF37;
+            --light-bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-slate);
+            overflow-x: hidden;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--light-bg);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            width: 240px;
+            padding-top: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        /* Logo Container */ 
+        .side-nav-logo { 
+            margin-top: 0;
+            top: 0; 
+            position:sticky;
+            background-color: white; 
+            padding: 1rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-bottom: 1px solid #e0e0e0; 
+            z-index: 10; 
+        } 
+        /* Logo Image */ 
+        .side-nav-logo img { 
+            width: 90%; 
+            max-width: 100px; 
+            height: auto; 
+            object-fit: contain; 
+            transition: max-width 0.3s ease; 
+        }
+        .sidebar .nav-link {
+            color: var(--primary-navy);
+            padding: 12px 20px;
+            margin: 4px 0;
+            border-radius: 0 25px 25px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: var(--primary-gold);
+            background-color: rgba(255,255,255,0.1);
+            border-left: 4px solid var(--primary-gold);
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+        .top-navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .summary-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-gold);
+            border-radius: 4px;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .badge-draft { background-color: #cbd5e0; color: #4a5568; }
+        .badge-published { background-color: #93c5fd; color: #1e40af; }
+        .badge-closed { background-color: #ed7575; color: #166534; }
+        .btn-gold {
+            background-color: var(--primary-gold);
+            color: var(--primary-navy);
+            border: none;
+            font-weight: 600;
+        }
+        .btn-gold:hover {
+            background-color: #b8952a;
+            color: white;
+        }
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--primary-slate);
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            margin-right: 5px;
+            border-radius: 6px;
+        }
+        .btn-view { background-color: #dbeafe; color: #1d4ed8; }
+        .btn-edit { background-color: #dcfce7; color: #16a34a; }
+        .btn-close { background-color: #fee2e2; color: #dc2626; }
+        .btn-report { background-color: #ede9fe; color: #7c3aed; }
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-slate);
+            margin-bottom: 8px;
+        }
+        .form-control, .form-select {
+            border: 1px solid #cbd5e1;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        /* Ministry-Department Row Styles */
+        .ministry-row {
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        .remove-ministry {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-ministry:hover {
+            background-color: #fecaca;
+        }
+        .add-ministry-btn {
+            background-color: #dcfce7;
+            color: #16a34a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .add-ministry-btn:hover {
+            background-color: #bbf7d0;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 180px;
+            }
+            .main-content {
+                margin-left: 180px;
+                padding: 15px;
+            }
+            .summary-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="side-nav-logo">
+            <div class="side-nav-logo img">
+                <img src="ifmis.png" alt="IFMIS Logo" />
+            </div>
+        </div>
+        <div class="text-center mb-4">
+            <h5 class="text-white"></h5>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard" data-view="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#meetings" data-view="meetings">
+                    <i class="fas fa-calendar-alt"></i> Meetings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#registrations" data-view="registrations">
+                    <i class="fas fa-users"></i> Registrations
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#reports" data-view="reports">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation Bar -->
+        <div class="top-navbar d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Admin Dashboard</h4>
+            <div class="d-flex align-items-center">
+                <span class="fw-bold">Mr. Sithole</span>
+                <button class="btn btn-outline-secondary ms-3">Logout</button>
+            </div>
+        </div>
+        <!-- Dashboard View -->
+        <div id="dashboard" class="view-content">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-calendar-alt fa-2x text-primary me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Upcoming Meetings</h6>
+                                <small class="text-muted">Next meeting details</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>IFMIS Launch</strong> – Oct 22, 2025, 10:00 AM</p>
+                        <small class="text-muted">3 meetings scheduled this week</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-users fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Registration Summary</h6>
+                                <small class="text-muted">Current registration status</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>42 total registrations</strong></p>
+                        <small class="text-muted">28 confirmed, 14 pending</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle fa-2x text-info me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Recent Attendance</h6>
+                                <small class="text-muted">Last meeting attendance</small>
+                            </div>
+                        </div>
+                        <p class="mb-1"><strong>IFMIS Training – 92% attendance (38/42)</strong></p>
+                        <button class="btn btn-sm btn-outline-primary mt-2">View Report</button>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="summary-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-bolt fa-2x text-warning me-3"></i>
+                            <div>
+                                <h6 class="mb-0">Quick Actions</h6>
+                                <small class="text-muted">Frequently used actions</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-gold w-100 mb-2">+ Create Meeting</button>
+                        <button class="btn btn-outline-secondary w-100">📊 Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Meetings View -->
+        <div id="meetings" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Manage Meetings</h4>
+                <button class="btn btn-gold" id="createMeetingBtn">+ Create New Meeting</button>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option>All Status</option>
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Closed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option>Last 30 days</option>
+                                <option>Last 7 days</option>
+                                <option>This month</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date & Time</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Registrations</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>IFMIS Training</td>
+                                    <td>Oct 22, 2025, 10:00 AM</td>
+                                    <td>Happy Valley</td>
+                                    <td><span class="status-badge badge-published">Ongoing</span></td>
+                                    <td>28 / 50</td>
+                                    <td>
+                                        <button class="btn action-btn btn-view">View</button>
+                                        <button class="btn action-btn btn-edit">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>IFMIS Launch</td>
+                                    <td>Sep 15, 2025, 2:00 PM</td>
+                                    <td>Royal Villas</td>
+                                    <td><span class="status-badge badge-closed">Closed</span></td>
+                                    <td>38 / 42</td>
+                                    <td>
+                                        <button class="btn action-btn btn-view">View</button>
+                                        <button class="btn action-btn btn-report">Report</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Create Meeting Form (Modal) -->
+        <div class="modal fade" id="createMeetingModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Meeting</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Meeting Title *</label>
+                                <input type="text" class="form-control" placeholder="e.g., Annual Policy Review">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Agenda *</label>
+                                <textarea class="form-control" rows="4" placeholder="List key discussion points..."></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date & Time *</label>
+                                    <input type="datetime-local" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Duration</label>
+                                    <select class="form-select">
+                                        <option>30 min</option>
+                                        <option selected>1 hour</option>
+                                        <option>1.5 hours</option>
+                                        <option>2 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location *</label>
+                                <input type="text" class="form-control" placeholder="e.g., Conference Room B, Central Secretariat">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Target Ministries & Departments</label>
+                                <p class="text-muted small">Add ministries and their departments to target specific officers for this meeting</p>
+                                <div id="ministryRows">
+                                    <!-- First ministry row (always visible) -->
+                                    <div class="ministry-row" data-index="0">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <select class="form-select ministry-select" required>
+                                                    <option value="">Select Ministry</option>
+                                                    <option>Ministry of Finance</option>
+                                                    <option>Ministry of Health</option>
+                                                    <option>Ministry of Education</option>
+                                                    <option>Ministry of Defence</option>
+                                                    <option>Ministry of Home Affairs</option>
+                                                    <option>Ministry of External Affairs</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-5 mb-2">
+                                                <select class="form-select department-select" required>
+                                                    <option value="">Select Department</option>
+                                                    <option>Budget Division</option>
+                                                    <option>Health Services</option>
+                                                    <option>Academic Affairs</option>
+                                                    <option>Defence Operations</option>
+                                                    <option>Internal Security</option>
+                                                    <option>Diplomatic Relations</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-center">
+                                                <button type="button" class="remove-ministry" title="Remove" disabled>
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-ministry-btn" id="addMinistryBtn">
+                                    <i class="fas fa-plus me-1"></i> Add Another Ministry
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Save as Draft</button>
+                        <button type="button" class="btn btn-gold">Publish Meeting</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Registrations View -->
+        <div id="registrations" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Registration Progress</h4>
+                <button class="btn btn-outline-secondary">Export to CSV</button>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Meeting</label>
+                        <select class="form-select">
+                            <option>IFMIS Launch</option>
+                            <option>IFMIS Training</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <h6>Registration Progress for: Budget Review Q4</h6>
+                        <div class="progress-bar-custom mb-2">
+                            <div class="progress-bar-fill" style="width: 56%"></div>
+                        </div>
+                        <small class="text-muted">28 of 50 expected officers registered (56%)</small>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="Search by name...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option>All Ministries</option>
+                                <option>Ministry of Finance</option>
+                                <option>Ministry of Health</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option>All Departments</option>
+                                <option>Budget Division</option>
+                                <option>Health Services</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Officer Name</th>
+                                    <th>Ministry</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>Registered</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sizwe Msibi</td>
+                                    <td>Ministry of Finance</td>
+                                    <td>Budget Division</td>
+                                    <td>Deputy Secretary</td>
+                                    <td>sizwe.msibi@finance.gov.sz</td>
+                                    <td>+268 76111111</td>
+                                    <td>Oct 18, 2025, 2:15 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Vukile Simelane</td>
+                                    <td>Ministry of Health</td>
+                                    <td>Health Services</td>
+                                    <td>Under Secretary</td>
+                                    <td>vukile.simelane@health.gov.sz</td>
+                                    <td>+268 76000000</td>
+                                    <td>Oct 17, 2025, 11:30 AM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Reports View -->
+        <div id="reports" class="view-content d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Attendance Reports</h4>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!-- Meeting Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Select Closed Meeting</label>
+                        <select class="form-select" id="report-meeting-select">
+                            <option value="q3">IFMIS Training (Sep 15, 2025)</option>
+                            <option value="annual">IFMIS Launch (Aug 10, 2025)</option>
+                        </select>
+                    </div>
+                    <!-- Report Type Toggle -->
+                    <div class="mb-4">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="reportType" id="standardReport" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="standardReport">Standard Report</label>
+                            <input type="radio" class="btn-check" name="reportType" id="customReport" autocomplete="off">
+                            <label class="btn btn-outline-secondary" for="customReport">Custom Report</label>
+                        </div>
+                    </div>
+                    <!-- Custom Filters (Initially Hidden) -->
+                    <div id="custom-filters" class="mb-4 d-none">
+                        <h6>Custom Filters</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Ministry</label>
+                                <select class="form-select" id="filter-ministry">
+                                    <option value="">All Ministries</option>
+                                    <option>Ministry of Finance</option>
+                                    <option>Ministry of Health</option>
+                                    <option>Ministry of Education</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Department</label>
+                                <select class="form-select" id="filter-department">
+                                    <option value="">All Departments</option>
+                                    <option>Budget Division</option>
+                                    <option>Health Services</option>
+                                    <option>Academic Affairs</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Attendance Status</label>
+                                <select class="form-select" id="filter-status">
+                                    <option value="">All Statuses</option>
+                                    <option value="present">Present</option>
+                                    <option value="absent">Absent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="generate-custom-report" class="btn btn-gold mt-3">
+                            <i class="fas fa-filter me-2"></i>Generate Custom Report
+                        </button>
+                    </div>
+                    <!-- Attendance Summary -->
+                    <div class="summary-card mb-4">
+                        <h6>Attendance Summary</h6>
+                        <p><strong id="summary-meeting-title">Q3 Planning – Sep 15, 2025</strong></p>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="mb-1"><strong>Total Registered:</strong> <span id="total-registered">42</span></p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-success"><strong>Attended:</strong> <span id="total-attended">38</span> ✅</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1 text-danger"><strong>Absent:</strong> <span id="total-absent">4</span> ❌</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1"><strong>Attendance Rate:</strong> <span id="attendance-rate">90.5%</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Export Buttons -->
+                    <div class="d-flex mb-4">
+                        <button class="btn btn-outline-primary me-2 export-btn" data-format="pdf">
+                            <i class="fas fa-file-pdf me-2"></i>Export PDF
+                        </button>
+                        <button class="btn btn-outline-secondary export-btn" data-format="csv">
+                            <i class="fas fa-file-csv me-2"></i>Export CSV
+                        </button>
+                    </div>
+                    <!-- Report Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Ministry</th>
+                                    <th>Department</th>
+                                    <th>Officer Name</th>
+                                    <th>Designation</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-table-body">
+                                <!-- Data will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Declare ministry counter (FIXED: was missing!)
+            let ministryCounter = 1;
+
+            // Sample data for reports (in real app, fetch from backend)
+            const reportData = {
+                q3: [
+                    { ministry: "Ministry of Finance", dept: "Budget Division", name: "Sizwe Msibi", designation: "Deputy Secretary", email: "sizwe.msibi@finance.gov.sz", contact: "+268 76111111", status: "present" },
+                    { ministry: "Ministry of Health", dept: "Health Services", name: "Vukile Simelane", designation: "Under Secretary", email: "vukile.simelane@health.gov.sz", contact: "+268 76000000", status: "present" },
+                    { ministry: "Ministry of Education", dept: "Academic Affairs", name: "Teyise Dlamini", designation: "Joint Secretary", email: "teyise.dlamini@academic.gov.sz", contact: "+268 762222222", status: "absent" },
+                    { ministry: "Ministry of Finance", dept: "Policy Unit", name: "Nomsa Khumalo", designation: "Director", email: "nomsa.khumalo@finance.gov.sz", contact: "+268 763333333", status: "present" }
+                ],
+                annual: [
+                    { ministry: "Ministry of Health", dept: "Health Services", name: "Dr. Bongiwe Mamba", designation: "Chief Medical Officer", email: "bongiwe.mamba@health.gov.sz", contact: "+268 764444444", status: "absent" },
+                    { ministry: "Ministry of Education", dept: "Academic Affairs", name: "Thulani Nxumalo", designation: "Principal Secretary", email: "thulani.nxumalo@education.gov.sz", contact: "+268 765555555", status: "present" }
+                ]
+            };
+
+            // Add ministry row function
+            function addMinistryRow() {
+                const rowHtml = `
+                    <div class="ministry-row" data-index="${ministryCounter}">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <select class="form-select ministry-select" required>
+                                    <option value="">Select Ministry</option>
+                                    <option>Ministry of Finance</option>
+                                    <option>Ministry of Health</option>
+                                    <option>Ministry of Education</option>
+                                    <option>Ministry of Defence</option>
+                                    <option>Ministry of Home Affairs</option>
+                                    <option>Ministry of External Affairs</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5 mb-2">
+                                <select class="form-select department-select" required>
+                                    <option value="">Select Department</option>
+                                    <option>Budget Division</option>
+                                    <option>Health Services</option>
+                                    <option>Academic Affairs</option>
+                                    <option>Defence Operations</option>
+                                    <option>Internal Security</option>
+                                    <option>Diplomatic Relations</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 d-flex align-items-center">
+                                <button type="button" class="remove-ministry" title="Remove">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#ministryRows').append(rowHtml);
+                // Ensure remove buttons are enabled when >1 row
+                $('.remove-ministry').prop('disabled', $('.ministry-row').length <= 1);
+                ministryCounter++;
+            }
+
+            // Add ministry button
+            $('#addMinistryBtn').on('click', function() {
+                addMinistryRow();
+            });
+
+            // Remove ministry row (event delegation)
+            $(document).on('click', '.remove-ministry', function() {
+                if ($('.ministry-row').length > 1) {
+                    $(this).closest('.ministry-row').remove();
+                    // Re-disable remove if only one left
+                    $('.remove-ministry').prop('disabled', $('.ministry-row').length <= 1);
+                }
+            });
+
+            // Helper: Format status display
+            function formatStatus(status) {
+                if (status === 'present') return '<span class="text-success"> Present</span>';
+                if (status === 'absent') return '<span class="text-danger"> Absent</span>';
+                return status;
+            }
+
+            // Helper: Calculate summary stats
+            function getSummaryStats(data) {
+                const total = data.length;
+                const attended = data.filter(p => p.status === 'present').length;
+                const absent = total - attended;
+                const rate = total > 0 ? ((attended / total) * 100).toFixed(1) + '%' : '0%';
+                return { total, attended, absent, rate };
+            }
+
+            // Render report table and summary
+            function renderReport(data, meetingTitle) {
+                const tbody = $('#report-table-body');
+                const summary = getSummaryStats(data);
+                // Update summary
+                $('#summary-meeting-title').text(meetingTitle);
+                $('#total-registered').text(summary.total);
+                $('#total-attended').text(summary.attended);
+                $('#total-absent').text(summary.absent);
+                $('#attendance-rate').text(summary.rate);
+                // Render table rows
+                tbody.empty();
+                data.forEach(person => {
+                    tbody.append(`
+                        <tr>
+                            <td>${person.ministry}</td>
+                            <td>${person.dept}</td>
+                            <td>${person.name}</td>
+                            <td>${person.designation}</td>
+                            <td>${person.email}</td>
+                            <td>${person.contact}</td>
+                            <td>${formatStatus(person.status)}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Initial load
+            function loadReport() {
+                const meetingId = $('#report-meeting-select').val();
+                const meetingTitle = $('#report-meeting-select option:selected').text();
+                const data = reportData[meetingId] || [];
+                renderReport(data, meetingTitle);
+            }
+
+            // Toggle custom filters
+            $('input[name="reportType"]').on('change', function() {
+                if ($('#customReport').is(':checked')) {
+                    $('#custom-filters').removeClass('d-none');
+                } else {
+                    $('#custom-filters').addClass('d-none');
+                    loadReport(); // Revert to full report
+                }
+            });
+
+            // Generate custom report
+            $('#generate-custom-report').on('click', function() {
+                const meetingId = $('#report-meeting-select').val();
+                let data = [...(reportData[meetingId] || [])];
+                const ministryFilter = $('#filter-ministry').val();
+                const deptFilter = $('#filter-department').val();
+                const statusFilter = $('#filter-status').val();
+                if (ministryFilter) {
+                    data = data.filter(p => p.ministry === ministryFilter);
+                }
+                if (deptFilter) {
+                    data = data.filter(p => p.dept === deptFilter);
+                }
+                if (statusFilter) {
+                    data = data.filter(p => p.status === statusFilter);
+                }
+                const meetingTitle = $('#report-meeting-select option:selected').text() + ' (Custom)';
+                renderReport(data, meetingTitle);
+            });
+
+            // Meeting change reloads standard report
+            $('#report-meeting-select').on('change', function() {
+                if ($('#standardReport').is(':checked')) {
+                    loadReport();
+                }
+            });
+
+            // Export buttons (simulated)
+            $('.export-btn').on('click', function() {
+                const format = $(this).data('format');
+                const isCustom = $('#customReport').is(':checked');
+                const type = isCustom ? 'custom' : 'standard';
+                alert(`Generating ${type} report in ${format.toUpperCase()} format.\n(In a real system, this would download a file.)`);
+            });
+
+            // Initial load
+            loadReport();
+
+            // Navigation handling
+            $('.nav-link').on('click', function(e) {
+                e.preventDefault();
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+                const view = $(this).data('view');
+                $('.view-content').addClass('d-none');
+                $('#' + view).removeClass('d-none');
+            });
+
+            // Create Meeting button
+            $('#createMeetingBtn').on('click', function() {
+                $('#createMeetingModal').modal('show');
+            });
+
+            // Quick Actions in Dashboard
+            $('.summary-card .btn-outline-primary').on('click', function() {
+                $('.nav-link').removeClass('active');
+                $('.nav-link[data-view="reports"]').addClass('active');
+                $('.view-content').addClass('d-none');
+                $('#reports').removeClass('d-none');
+            });
+            $('.summary-card .btn-gold').on('click', function() {
+                $('#createMeetingModal').modal('show');
+            });
+
+            // Export buttons (fallback)
+            $('.btn-outline-secondary').on('click', function() {
+                alert('Export functionality would be implemented with backend integration.');
+            });
+            $('.btn-outline-primary').on('click', function() {
+                alert('PDF export would generate official attendance certificate.');
+            });
+        });
+    </script>
+    <!-- Tom Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+</body>
+</html>

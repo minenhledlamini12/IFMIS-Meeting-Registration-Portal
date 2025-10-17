@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Official Meeting Registration</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-navy: #0a2540;
+      --primary-gold: #d4af37;
+      --light-bg: #f8fafc;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: var(--light-bg);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      overflow: auto; /* Enable scrolling for the entire page */
+    }
+
+    body {
+      display: flex;
+      align-items: flex-start; /* Changed from center to flex-start */
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      min-height: 100vh; /* Ensure body takes at least full viewport height */
+    }
+
+    .registration-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 90vh; /* Limit maximum height */
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .left-section {
+      width: 35%;
+      background-color: #ffffff;
+      padding: 40px 25px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      overflow-y: auto; /* Enable vertical scrolling if needed */
+    }
+
+    .left-section > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-section img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+    }
+
+    .left-section h2 {
+      color: var(--primary-navy);
+      margin-bottom: 25px;
+    }
+
+    .meeting-info {
+      background-color: #fff;
+      border: 2px solid var(--primary-navy);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .meeting-info h5 {
+      color: var(--primary-navy);
+      margin-bottom: 10px;
+    }
+
+    .meeting-info p {
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+
+    .right-section {
+      width: 65%;
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto; /* Enable vertical scrolling for the form */
+    }
+
+    /* Pagination Progress */
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #666;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+      background-color: var(--primary-navy);
+      color: white;
+    }
+
+    .step.completed .step-number {
+      background-color: #c7ab1e;
+      color: white;
+    }
+
+    .step-label {
+      font-size: 12px;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .step.active .step-label {
+      color: var(--primary-navy);
+    }
+
+    .step-line {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      right: -50%;
+      height: 2px;
+      background-color: #e0e0e0;
+      z-index: -1;
+    }
+
+    .step:last-child .step-line {
+      display: none;
+    }
+
+    .step.completed .step-line {
+      background-color: #28a745;
+    }
+
+    .form-step {
+      display: none;
+      flex-grow: 1;
+    }
+
+    .form-step.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .btn-navy {
+      background-color: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-navy:hover {
+      background-color: #163c66;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(10, 37, 64, 0.3);
+    }
+
+    .btn-outline-navy {
+      border: 2px solid var(--primary-navy);
+      color: var(--primary-navy);
+      background: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-navy:hover {
+      background-color: var(--primary-navy);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .signature-pad {
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      background-color: white;
+      cursor: crosshair;
+      width: 100%;
+      height: 200px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    /* Vendor prefixes for cross-browser consistency */
+    .registration-container {
+      -webkit-border-radius: 16px;
+      -moz-border-radius: 16px;
+      -ms-border-radius: 16px;
+      -o-border-radius: 16px;
+    }
+
+    .btn-navy, .btn-outline-navy {
+      -webkit-transition: all 0.3s ease;
+      -moz-transition: all 0.3s ease;
+      -ms-transition: all 0.3s ease;
+      -o-transition: all 0.3s ease;
+    }
+
+    @media (max-width: 992px) {
+      .registration-container {
+        flex-direction: column;
+        height: auto;
+        max-height: none; /* Remove max-height restriction on mobile */
+      }
+
+      .left-section,
+      .right-section {
+        width: 100%;
+      }
+
+      .left-section {
+        padding: 20px;
+        max-height: 40vh; /* Limit height on mobile */
+        overflow-y: auto;
+      }
+
+      .right-section {
+        padding: 20px;
+        max-height: 60vh; /* Limit height on mobile */
+        overflow-y: auto;
+      }
+
+      .step-indicator {
+        flex-wrap: wrap;
+      }
+
+      .step-label {
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+        align-items: flex-start; /* Ensure content starts from top on mobile */
+      }
+
+      .registration-container {
+        border-radius: 8px;
+      }
+
+      .left-section img {
+        width: 60px;
+        height: 60px;
+      }
+
+      .left-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .form-step h4 {
+        font-size: 1.25rem;
+      }
+
+      .signature-pad {
+        height: 150px;
+      }
+
+      .d-flex.gap-2 {
+        flex-direction: column;
+      }
+
+      .btn {
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .step-number {
+        width: 30px;
+        height: 30px;
+        font-size: 0.875rem;
+      }
+
+      .step-label {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="registration-container">
+    <!-- Left Panel -->
+    <div class="left-section">
+      <img src="ifmis.png" alt="IFMIS Logo" />
+      <h2>Official Meeting Registration</h2>
+      <div class="meeting-info">
+        <h5><i class="fas fa-calendar-alt me-2"></i>Meeting Details</h5>
+        <p><strong>Title:</strong> Umsebe-Ifmis - 2025</p>
+        <p><strong>Date & Time:</strong> October 22, 2025 at 10:00 AM</p>
+        <p><strong>Location:</strong>Happy Valley, Conference Room</p>
+      </div>
+    </div>
+
+    <!-- Right Panel (Paginated Form) -->
+    <div class="right-section">
+      <div class="step-indicator">
+        <div class="step active" id="step1Indicator">
+          <div class="step-number">1</div>
+          <div class="step-label">Organization</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step" id="step2Indicator">
+          <div class="step-number">2</div>
+          <div class="step-label">Personal Info</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step" id="step3Indicator">
+          <div class="step-number">3</div>
+          <div class="step-label">Signature</div>
+        </div>
+      </div>
+
+      <form id="registrationForm" style="flex-grow: 1; display: flex; flex-direction: column;">
+        <!-- Step 1 -->
+        <!-- Step 1 --><!-- Existing Step 1 HTML -->
+<!-- Step 1 --><!-- Existing Step 1 HTML -->
+<div class="form-step active" id="step1">
+    <h4 class="mb-4 text-center" style="color: var(--primary-navy)">Organizational Information</h4>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Ministry</label>
+        <select class="form-select" id="ministrySelect" required>
+            <option value="">Select your ministry</option>
+            <option value="Ministry of Finance">Ministry of Finance</option>
+            <option value="Ministry of Health">Ministry of Health</option>
+            <option value="Ministry of Education">Ministry of Education</option>
+            <option value="Ministry of Defence">Ministry of Defence</option>
+            <option value="Ministry of Agriculture">Ministry of Agriculture</option>
+            <option value="Ministry of Transportation">Ministry of Transportation</option>
+            <option value="Ministry of Energy">Ministry of Energy</option>
+            <option value="Ministry of Foreign Affairs">Ministry of Foreign Affairs</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div class="mb-3 d-none" id="manualMinistryContainer">
+        <label class="form-label">Please specify your ministry</label>
+        <input type="text" class="form-control" id="manualMinistry">
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Department</label>
+        <select class="form-select" id="departmentSelect" required>
+            <option value="">Select your department</option>
+            <option value="budget">Budget Division</option>
+            <option value="health-serv">Health Services</option>
+            <option value="academic">Academic Affairs</option>
+            <option value="policy">Policy Unit</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div class="mb-3 d-none" id="manualDepartmentContainer">
+        <label class="form-label">Please specify your department</label>
+        <input type="text" class="form-control" id="manualDepartment">
+    </div>
+    <div class="mb-4">
+        <label class="form-label fw-bold">Designation</label>
+        <select class="form-select" id="designationSelect" required>
+            <option value="">Select your designation</option>
+            <option>Ministry of Finance</option>
+            <option>Ministry of Health</option>
+            <option>Ministry of Education</option>
+            <option>Ministry of Defence</option>
+            <option>Ministry of Agriculture</option>
+            <option>Ministry of Transportation</option>
+            <option>Ministry of Energy</option>
+            <option>Ministry of Foreign Affairs</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div class="mb-3 d-none" id="manualDesignationContainer">
+        <label class="form-label">Please specify your designation</label>
+        <input type="text" class="form-control" id="manualDesignation">
+    </div>
+    <div class="d-grid mt-auto">
+        <button type="button" class="btn btn-navy" id="nextBtn1">Next <i class="fas fa-arrow-right ms-2"></i></button>
+    </div>
+</div>
+
+        <!-- Step 2 -->
+        <div class="form-step" id="step2">
+          <h4 class="mb-4 text-center" style="color: var(--primary-navy)">Personal Information</h4>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Officer Name</label>
+            <input type="text" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Official Email</label>
+            <input type="email" class="form-control" placeholder="name@ministry.gov.in" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Contact Number</label>
+            <input type="tel" class="form-control" placeholder="+268 76 000 000" required />
+          </div>
+
+
+          <div class="d-flex gap-2 mt-auto">
+            <button type="button" class="btn btn-outline-navy flex-fill" id="prevBtn1"><i class="fas fa-arrow-left me-2"></i>Previous</button>
+            <button type="button" class="btn btn-navy flex-fill" id="nextBtn2">Next <i class="fas fa-arrow-right ms-2"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="form-step" id="step3">
+          <h4 class="mb-4 text-center" style="color: var(--primary-navy)">Digital Signature</h4>
+          <div class="text-center mb-3">
+            <canvas id="signaturePad" class="signature-pad"></canvas>
+            <button type="button" class="btn btn-outline-navy mt-2" id="clearBtn"><i class="fas fa-eraser me-2"></i>Clear Signature</button>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Terms and Conditions</label>
+            <div style="height: 150px; overflow-y: auto; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px; font-size: 0.9rem;">
+              <p>By submitting this registration form, you agree to the following terms and conditions:</p>
+              <ol>
+                <li>All information provided must be accurate and truthful.</li>
+                <li>Your data will be processed according to the Data Protection Act, 2022.</li>
+              </ol>
+              <p>I acknowledge that I have read and understood these terms and conditions.</p>
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">
+              I agree to the terms and conditions
+            </label>
+          </div>
+
+          <div class="alert alert-success d-none" id="successAlert">
+            <i class="fas fa-check-circle me-2"></i>Registration submitted successfully!
+          </div>
+
+          <div class="d-flex gap-2 mt-auto">
+            <button type="button" class="btn btn-outline-navy flex-fill" id="prevBtn2"><i class="fas fa-arrow-left me-2"></i>Previous</button>
+            <button type="submit" class="btn btn-navy flex-fill"><i class="fas fa-check me-2"></i>Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+        
+// Updated JavaScript for handling "Other" selection for Ministry, Department, and Designation
+document.getElementById('ministrySelect').addEventListener('change', function() {
+    const manualMinistryContainer = document.getElementById('manualMinistryContainer');
+    const manualMinistryInput = document.getElementById('manualMinistry');
+    const departmentSelect = document.getElementById('departmentSelect');
+    const manualDepartmentContainer = document.getElementById('manualDepartmentContainer');
+    const manualDepartmentInput = document.getElementById('manualDepartment');
+    const designationSelect = document.getElementById('designationSelect');
+    const manualDesignationContainer = document.getElementById('manualDesignationContainer');
+    const manualDesignationInput = document.getElementById('manualDesignation');
+
+    if (this.value === 'other') {
+        // Show manual input fields for ministry, department, and designation
+        manualMinistryContainer.classList.remove('d-none');
+        manualMinistryInput.required = true;
+
+        // Hide department dropdown and show manual entry
+        departmentSelect.classList.add('d-none');
+        departmentSelect.required = false;
+        manualDepartmentContainer.classList.remove('d-none');
+        manualDepartmentInput.required = true;
+
+        // Hide designation dropdown and show manual entry
+        designationSelect.classList.add('d-none');
+        designationSelect.required = false;
+        manualDesignationContainer.classList.remove('d-none');
+        manualDesignationInput.required = true;
+
+    } else {
+        // If not "Other", hide manual inputs and show dropdowns
+        manualMinistryContainer.classList.add('d-none');
+        manualMinistryInput.required = false;
+        manualMinistryInput.value = '';
+
+        departmentSelect.classList.remove('d-none');
+        departmentSelect.required = true;
+        manualDepartmentContainer.classList.add('d-none');
+        manualDepartmentInput.required = false;
+        manualDepartmentInput.value = '';
+
+        designationSelect.classList.remove('d-none');
+        designationSelect.required = true;
+        manualDesignationContainer.classList.add('d-none');
+        manualDesignationInput.required = false;
+        manualDesignationInput.value = '';
+    }
+});
+
+// Handle Designation selection
+document.getElementById('designationSelect').addEventListener('change', function() {
+    const manualDesignationContainer = document.getElementById('manualDesignationContainer');
+    const manualDesignationInput = document.getElementById('manualDesignation');
+
+    if (this.value === 'other') {
+        manualDesignationContainer.classList.remove('d-none');
+        manualDesignationInput.required = true;
+    } else {
+        manualDesignationContainer.classList.add('d-none');
+        manualDesignationInput.required = false;
+        manualDesignationInput.value = ''; // Clear input when not selected
+    }
+});
+
+// Handle Designation selection
+document.getElementById('designationSelect').addEventListener('change', function() {
+    const designationOtherContainer = document.getElementById('designationOtherContainer');
+    const designationOtherInput = document.getElementById('designationOther');
+
+    if (this.value === 'other') {
+        designationOtherContainer.classList.remove('d-none');
+        designationOtherInput.required = true;
+    } else {
+        designationOtherContainer.classList.add('d-none');
+        designationOtherInput.required = false;
+        designationOtherInput.value = ''; // Clear input when not selected
+    }
+});
+    // Resize canvas to fit container responsively
+    function resizeCanvas() {
+      const canvas = document.getElementById("signaturePad");
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth - 4; // account for border
+      canvas.height = 200;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    let currentStep = 1;
+    const formSteps = document.querySelectorAll(".form-step");
+    const steps = document.querySelectorAll(".step");
+    const canvas = document.getElementById("signaturePad");
+    const ctx = canvas.getContext("2d");
+    let isDrawing = false,
+      hasSignature = false;
+
+    // Initial resize
+    resizeCanvas();
+
+    function showStep(step) {
+      formSteps.forEach((el) => el.classList.remove("active"));
+      steps.forEach((el, index) => {
+        el.classList.remove("active", "completed");
+        if (index + 1 < step) el.classList.add("completed");
+        else if (index + 1 === step) el.classList.add("active");
+      });
+      document.getElementById(`step${step}`).classList.add("active");
+      currentStep = step;
+      if (step === 3) resizeCanvas();
+    }
+
+    document.getElementById("nextBtn1").onclick = () => showStep(2);
+    document.getElementById("prevBtn1").onclick = () => showStep(1);
+    document.getElementById("nextBtn2").onclick = () => showStep(3);
+    document.getElementById("prevBtn2").onclick = () => showStep(2);
+
+    // Signature pad
+    function getXY(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+      const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+      return { x, y };
+    }
+
+    canvas.addEventListener("mousedown", (e) => {
+      isDrawing = true;
+      hasSignature = true;
+      const { x, y } = getXY(e);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    });
+    canvas.addEventListener("mousemove", (e) => {
+      if (!isDrawing) return;
+      const { x, y } = getXY(e);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = "#0a2540";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.stroke();
+    });
+    ["mouseup", "mouseout", "touchend"].forEach((evt) =>
+      canvas.addEventListener(evt, () => (isDrawing = false))
+    );
+
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      isDrawing = true;
+      hasSignature = true;
+      const { x, y } = getXY(e);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      if (!isDrawing) return;
+      const { x, y } = getXY(e);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    });
+
+    document.getElementById("clearBtn").onclick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasSignature = false;
+    };
+
+    document.getElementById("registrationForm").onsubmit = (e) => {
+      e.preventDefault();
+      if (!hasSignature) {
+        alert("Please sign before submitting.");
+        return;
+      }
+      document.getElementById("successAlert").classList.remove("d-none");
+      setTimeout(() => {
+        document.getElementById("registrationForm").reset();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        hasSignature = false;
+        showStep(1);
+        document.getElementById("successAlert").classList.add("d-none");
+      }, 2500);
+    };
+  </script>
+</body>
+</html>
