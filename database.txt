@@ -1,0 +1,138 @@
+-- Drop tables if they exist (optional, for clean re-runs during development)
+DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS registrations;
+DROP TABLE IF EXISTS meeting_targets;
+DROP TABLE IF EXISTS officers;
+DROP TABLE IF EXISTS departments;
+DROP TABLE IF EXISTS ministries;
+DROP TABLE IF EXISTS meetings;
+
+-- 1. Ministries
+CREATE TABLE ministries (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- 2. Departments (belong to a Ministry)
+CREATE TABLE departments (
+    id SERIAL PRIMARY KEY,
+    ministry_id INTEGER NOT NULL REFERENCES ministries(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    UNIQUE(ministry_id, name)
+);
+
+-- 3. Meetings
+CREATE TABLE meetings (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    meeting_type VARCHAR(50) NOT NULL CHECK (meeting_type IN ('Meeting', 'Training', 'Workshop')),
+    agenda TEXT NOT NULL,
+    meeting_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Published', 'Closed')),
+    created_at TIMESTAMP DEFAULT NOW(),
+    published_at TIMESTAMP
+);
+
+-- 4. Meeting Targets (which Ministries/Departments are invited)
+CREATE TABLE meeting_targets (
+    id SERIAL PRIMARY KEY,
+    meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
+    ministry_id INTEGER NOT NULL REFERENCES ministries(id) ON DELETE CASCADE,
+    department_id INTEGER NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    UNIQUE(meeting_id, ministry_id, department_id)
+);
+
+-- 5. Officers (registrants)
+CREATE TABLE officers (
+    id SERIAL PRIMARY KEY,
+    ministry_id INTEGER NOT NULL REFERENCES ministries(id) ON DELETE RESTRICT,
+    department_id INTEGER NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
+    designation VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    official_email VARCHAR(255) NOT NULL UNIQUE,
+    contact_number VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 6. Registrations (link Officers to Meetings)
+CREATE TABLE registrations (
+    id SERIAL PRIMARY KEY,
+    meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
+    officer_id INTEGER NOT NULL REFERENCES officers(id) ON DELETE CASCADE,
+    digital_signature BYTEA, -- Stores signature as binary (e.g., PNG blob)
+    terms_accepted BOOLEAN NOT NULL DEFAULT true,
+    registered_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(meeting_id, officer_id)
+);
+
+-- 7. Attendance (optional: mark who actually attended)
+CREATE TABLE attendance (
+    id SERIAL PRIMARY KEY,
+    registration_id INTEGER NOT NULL REFERENCES registrations(id) ON DELETE CASCADE,
+    attended BOOLEAN NOT NULL DEFAULT false,
+    checked_in_at TIMESTAMP
+);
+
+-- Indexes for performance
+CREATE INDEX idx_meetings_date ON meetings(meeting_date);
+CREATE INDEX idx_registrations_meeting ON registrations(meeting_id);
+CREATE INDEX idx_registrations_officer ON registrations(officer_id);
+CREATE INDEX idx_officers_email ON officers(official_email);
+CREATE INDEX idx_meeting_targets_meeting ON meeting_targets(meeting_id);
+CREATE INDEX idx_officers_ministry_dept ON officers(ministry_id, department_id);
+
+-- Sample Data (optional – remove in production if not needed)
+INSERT INTO ministries (name) VALUES
+('Ministry of Finance'),
+('Ministry of Health'),
+('Ministry of Education'),
+('Ministry of Defence'),
+('Ministry of Home Affairs'),
+('Ministry of External Affairs');
+
+INSERT INTO departments (ministry_id, name) VALUES
+(1, 'Budget Division'),
+(1, 'Policy Unit'),
+(2, 'Health Services'),
+(3, 'Academic Affairs'),
+(4, 'Defence Operations'),
+(5, 'Internal Security'),
+(6, 'Diplomatic Relations');
+
+-- Example meeting
+INSERT INTO meetings (title, meeting_type, agenda, meeting_date, start_time, end_time, location, status, published_at)
+VALUES (
+    'Umsebe-Ifmis - 2025',
+    'Training',
+    'Annual IFMIS system rollout and policy review',
+    '2025-10-22',
+    '10:00:00',
+    '12:00:00',
+    'Happy Valley, Conference Room',
+    'Published',
+    NOW()
+);
+
+-- Target ministries/departments for the meeting
+INSERT INTO meeting_targets (meeting_id, ministry_id, department_id)
+SELECT 1, m.id, d.id
+FROM ministries m, departments d
+WHERE m.name = 'Ministry of Finance' AND d.name = 'Budget Division';
+
+-- Example officer
+INSERT INTO officers (ministry_id, department_id, designation, full_name, official_email, contact_number)
+VALUES (
+    1,
+    1,
+    'Deputy Secretary',
+    'Sizwe Msibi',
+    'sizwe.msibi@finance.gov.sz',
+    '+268 76111111'
+);
+
+-- Example registration (signature left NULL for now)
+INSERT INTO registrations (meeting_id, officer_id, terms_accepted)
+VALUES (1, 1, true);
