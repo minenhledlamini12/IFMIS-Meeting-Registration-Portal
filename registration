@@ -1,330 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Government Meeting Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-navy: #0A2540;
-            --primary-slate: #4A5568;
-            --primary-gold: #D4AF37;
-            --light-bg: #F8FAFC;
-            --card-bg: #FFFFFF;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-            padding: 20px;
-        }
-        
-        .registration-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .header-section {
-            background: linear-gradient(135deg, var(--primary-navy) 0%, #1a3a5f 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-        }
-        
-        .header-section h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .header-section p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .meeting-info {
-            background-color: #f0f7ff;
-            border-left: 4px solid var(--primary-gold);
-            padding: 20px;
-            margin: 25px;
-            border-radius: 8px;
-        }
-        
-        .form-section {
-            padding: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 24px;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--primary-slate);
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .form-control, .form-select {
-            border: 1px solid #cbd5e1;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-            outline: none;
-        }
-        
-        .required {
-            color: #dc2626;
-        }
-        
-        .signature-section {
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            background-color: #f8fafc;
-        }
-        
-        .signature-input {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 12px;
-            font-size: 1.1rem;
-            font-style: italic;
-            text-align: center;
-            border: none;
-            background: transparent;
-            border-bottom: 2px solid var(--primary-navy);
-        }
-        
-        .signature-input:focus {
-            outline: none;
-            border-bottom-color: var(--primary-gold);
-        }
-        
-        .btn-submit {
-            background: linear-gradient(135deg, var(--primary-gold) 0%, #b8952a 100%);
-            color: var(--primary-navy);
-            border: none;
-            padding: 14px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 8px;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
-        }
-        
-        .privacy-notice {
-            background-color: #f1f5f9;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            font-size: 0.9rem;
-            color: var(--primary-slate);
-        }
-        
-        .privacy-notice i {
-            color: var(--primary-gold);
-            margin-right: 8px;
-        }
-        
-        .gov-logo {
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary-gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 24px;
-            color: var(--primary-navy);
-            font-weight: bold;
-        }
-        
-        @media (max-width: 576px) {
-            .header-section {
-                padding: 30px 20px;
-            }
-            
-            .header-section h1 {
-                font-size: 1.8rem;
-            }
-            
-            .form-section {
-                padding: 20px;
-            }
-            
-            .meeting-info {
-                margin: 20px 15px;
-                padding: 15px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Government Meeting Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary-navy: #0A2540;
+      --primary-slate: #4A5568;
+      --primary-gold: #D4AF37;
+      --light-bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-bg);
+      padding: 20px;
+    }
+
+    .registration-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, var(--primary-navy) 0%, #1a3a5f 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .header-section h1 { font-size: 2.2rem; font-weight: 600; margin-bottom: 10px; }
+
+    .header-section p { font-size: 1.1rem; opacity: 0.9; }
+
+    .meeting-info {
+      background-color: #f0f7ff;
+      border-left: 4px solid var(--primary-gold);
+      padding: 20px;
+      margin: 25px;
+      border-radius: 8px;
+    }
+
+    .form-section { padding: 30px; }
+
+    .form-label { font-weight: 600; color: var(--primary-slate); margin-bottom: 8px; display: block; }
+
+    .form-control, .form-select {
+      border: 1px solid #cbd5e1;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+      outline: none;
+    }
+
+    .required { color: #dc2626; }
+
+    .signature-section {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      background-color: #f8fafc;
+    }
+
+    .signature-input {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 12px;
+      font-size: 1.1rem;
+      font-style: italic;
+      text-align: center;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid var(--primary-navy);
+    }
+
+    .signature-input:focus { outline: none; border-bottom-color: var(--primary-gold); }
+
+    .btn-submit, .btn-gold {
+      background: linear-gradient(135deg, var(--primary-gold) 0%, #b8952a 100%);
+      color: var(--primary-navy);
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover, .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212,175,55,0.4);
+      color: #fff;
+    }
+
+    .privacy-notice {
+      background-color: #f1f5f9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: var(--primary-slate);
+    }
+
+    .privacy-notice i { color: var(--primary-gold); margin-right: 8px; }
+
+    .gov-logo {
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 24px;
+      color: var(--primary-navy);
+      font-weight: bold;
+    }
+
+    .bg-gold { background-color: var(--primary-gold) !important; }
+  </style>
 </head>
+
 <body>
-    <div class="registration-container">
-        <!-- Header Section -->
-        <div class="header-section">
-            <div class="gov-logo">
-                <i class="fas fa-landmark"></i>
-            </div>
-            <h1>Official Meeting Registration</h1>
-            <p>Please complete all required fields to register for the upcoming government meeting</p>
-        </div>
-        
-        <!-- Meeting Information -->
-        <div class="meeting-info">
-            <h5><i class="fas fa-calendar-alt me-2"></i>Meeting Details</h5>
-            <p class="mb-1"><strong>Title:</strong> Budget Review Q4 - 2025</p>
-            <p class="mb-1"><strong>Date & Time:</strong> October 22, 2025 at 10:00 AM</p>
-            <p class="mb-0"><strong>Location:</strong> Conference Room B, Central Secretariat</p>
-        </div>
-        
-        <!-- Registration Form -->
-        <div class="form-section">
-            <form id="registrationForm">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Ministry <span class="required">*</span></label>
-                            <select class="form-select" required>
-                                <option value="">Select your ministry</option>
-                                <option>Ministry of Finance</option>
-                                <option>Ministry of Health</option>
-                                <option>Ministry of Education</option>
-                                <option>Ministry of Defence</option>
-                                <option>Ministry of Home Affairs</option>
-                                <option>Ministry of External Affairs</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Department <span class="required">*</span></label>
-                            <select class="form-select" required>
-                                <option value="">Select your department</option>
-                                <option>Budget Division</option>
-                                <option>Health Services</option>
-                                <option>Academic Affairs</option>
-                                <option>Defence Operations</option>
-                                <option>Internal Security</option>
-                                <option>Diplomatic Relations</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Designation <span class="required">*</span></label>
-                            <input type="text" class="form-control" placeholder="e.g., Deputy Secretary" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Officer Name <span class="required">*</span></label>
-                            <input type="text" class="form-control" placeholder="Full name as per official records" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Official Email <span class="required">*</span></label>
-                            <input type="email" class="form-control" placeholder="name@ministry.gov.in" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Contact Number <span class="required">*</span></label>
-                            <input type="tel" class="form-control" placeholder="+91 98765 43210" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Signature Section -->
-                <div class="form-group">
-                    <label class="form-label">Digital Signature <span class="required">*</span></label>
-                    <div class="signature-section">
-                        <p>Type your full name below as your official digital signature</p>
-                        <input type="text" class="signature-input" placeholder="Type your full name here..." required>
-                        <small class="text-muted d-block mt-2">This serves as your digital attestation for official purposes</small>
-                    </div>
-                </div>
-                
-                <!-- Privacy Notice -->
-                <div class="privacy-notice">
-                    <p><i class="fas fa-lock"></i> <strong>Privacy Notice:</strong> Your information will be used only for official verification purposes and meeting coordination. All data is protected under government data protection protocols.</p>
-                    <p class="mb-0"><i class="fas fa-shield-alt"></i> This is a secure government registration portal. All submissions are encrypted and auditable.</p>
-                </div>
-                
-                <!-- Submit Button -->
-                <button type="submit" class="btn-submit mt-4">
-                    <i class="fas fa-paper-plane me-2"></i>Submit Registration
-                </button>
-            </form>
-        </div>
+  <div class="registration-container">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="gov-logo"><i class="fas fa-landmark"></i></div>
+      <h1>Official Meeting Registration</h1>
+      <p>Please complete all required fields to register for the upcoming government meeting</p>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#registrationForm').on('submit', function(e) {
-                e.preventDefault();
-                
-                // Form validation
-                let isValid = true;
-                $(this).find('input[required], select[required]').each(function() {
-                    if (!$(this).val().trim()) {
-                        isValid = false;
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
-                
-                if (isValid) {
-                    // Show success modal
-                    alert('Registration submitted successfully! You will receive a confirmation email shortly.');
-                    // In a real application, this would submit to a backend endpoint
-                    $(this)[0].reset();
-                } else {
-                    alert('Please fill in all required fields.');
-                }
-            });
-            
-            // Real-time validation
-            $('input, select').on('input change', function() {
-                if ($(this).val().trim()) {
-                    $(this).removeClass('is-invalid');
-                }
-            });
+    <!-- Meeting Info -->
+    <div class="meeting-info">
+      <h5><i class="fas fa-calendar-alt me-2"></i>Meeting Details</h5>
+      <p class="mb-1"><strong>Title:</strong> IFMIS Launch - 2025</p>
+      <p class="mb-1"><strong>Date & Time:</strong> October 22, 2025 at 10:00 AM</p>
+      <p class="mb-0"><strong>Location:</strong> Happy Valley, Conference Room</p>
+    </div>
+
+    <div class="form-section">
+      <!-- Step Indicators -->
+      <div class="d-flex justify-content-between mb-4 position-relative">
+        <div class="progress" style="height:8px;position:absolute;top:18px;left:0;right:0;z-index:0;">
+          <div class="progress-bar bg-gold" id="progress-bar" role="progressbar" style="width:0%;"></div>
+        </div>
+        <div class="text-center" style="z-index:1;">
+          <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width:36px;height:36px;">1</div>
+          <small>Organizational</small>
+        </div>
+        <div class="text-center" style="z-index:1;">
+          <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width:36px;height:36px;">2</div>
+          <small>Personal</small>
+        </div>
+        <div class="text-center" style="z-index:1;">
+          <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width:36px;height:36px;">3</div>
+          <small>Signature</small>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="registrationForm">
+        <!-- Step 1 -->
+        <div class="step step-1">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Ministry <span class="required">*</span></label>
+              <select class="form-select" name="ministry" required>
+                <option value="">Select your ministry</option>
+                <option>Ministry of Finance</option>
+                <option>Ministry of Health</option>
+                <option>Ministry of Education</option>
+                <option>Ministry of Defence</option>
+                <option>Ministry of Home Affairs</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Department <span class="required">*</span></label>
+              <select class="form-select" name="department" required>
+                <option value="">Select your department</option>
+                <option>Budget Division</option>
+                <option>Health Services</option>
+                <option>Academic Affairs</option>
+                <option>Internal Security</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="form-label">Designation <span class="required">*</span></label>
+            <input type="text" class="form-control" name="designation" placeholder="e.g., Deputy Secretary" required />
+          </div>
+          <div class="privacy-notice mt-4">
+            <p><i class="fas fa-lock"></i><strong>Privacy Notice:</strong> Your information will be used only for official verification purposes.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step step-2 d-none">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Officer Name <span class="required">*</span></label>
+              <input type="text" class="form-control" name="officerName" required placeholder="Full name as per official records" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Official Email <span class="required">*</span></label>
+              <input type="email" class="form-control" name="email" required placeholder="name@ministry.gov.sz" />
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="form-label">Contact Number <span class="required">*</span></label>
+            <input type="tel" class="form-control" name="contact" required placeholder="+268 76111111" />
+          </div>
+          <div class="privacy-notice mt-4">
+            <p><i class="fas fa-lock"></i><strong>Privacy Notice:</strong> Your information will be used only for official verification purposes.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step step-3 d-none">
+          <label class="form-label">Digital Signature <span class="required">*</span></label>
+          <div class="signature-section">
+            <p>Type your full name below as your official digital signature</p>
+            <input type="text" class="signature-input" name="signature" required placeholder="Type your full name here..." />
+            <small class="text-muted d-block mt-2">This serves as your digital attestation for official purposes</small>
+          </div>
+          <div class="privacy-notice mt-4">
+            <p><i class="fas fa-lock"></i><strong>Privacy Notice:</strong> Your information will be used only for official verification purposes.</p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-outline-secondary" id="prevBtn" style="display:none;">
+            <i class="fas fa-arrow-left me-2"></i>Back
+          </button>
+          <button type="button" class="btn btn-gold ms-auto" id="nextBtn">
+            Next <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+          <button type="submit" class="btn-submit ms-auto" id="submitBtn" style="display:none;">
+            <i class="fas fa-paper-plane me-2"></i>Submit Registration
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      let currentStep = 1;
+      const totalSteps = 3;
+
+      function updateProgress() {
+        const percent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        $('#progress-bar').css('width', percent + '%');
+
+        // Show/hide steps
+        $('.step').addClass('d-none');
+        $('.step-' + currentStep).removeClass('d-none');
+
+        // Step circles
+        $('.rounded-circle').each(function(i) {
+          const stepNum = i + 1;
+          if (stepNum < currentStep) $(this).removeClass('bg-secondary').addClass('bg-primary');
+          else if (stepNum === currentStep) $(this).removeClass('bg-secondary').addClass('bg-primary');
+          else $(this).removeClass('bg-primary').addClass('bg-secondary');
         });
-    </script>
+
+        // Buttons
+        $('#prevBtn').toggle(currentStep > 1);
+        $('#nextBtn').toggle(currentStep < totalSteps);
+        $('#submitBtn').toggle(currentStep === totalSteps);
+      }
+
+      function validateStep(step) {
+        let valid = true;
+        $('.step-' + step + ' [required]').each(function() {
+          const value = $(this).val() ? $(this).val().trim() : '';
+          if (!value) {
+            $(this).addClass('is-invalid');
+            valid = false;
+          } else {
+            $(this).removeClass('is-invalid');
+          }
+        });
+        return valid;
+      }
+
+      $('#nextBtn').on('click', function() {
+        if (validateStep(currentStep)) {
+          currentStep++;
+          updateProgress();
+        } else alert('Please complete all required fields.');
+      });
+
+      $('#prevBtn').on('click', function() {
+        if (currentStep > 1) {
+          currentStep--;
+          updateProgress();
+        }
+      });
+
+      $('#registrationForm').on('submit', function(e) {
+        e.preventDefault();
+        if (validateStep(currentStep)) {
+          alert('Registration submitted successfully! You will receive a confirmation email shortly.');
+          this.reset();
+          currentStep = 1;
+          updateProgress();
+        }
+      });
+
+      $('input, select').on('input change', function() {
+        if ($(this).val()?.trim()) $(this).removeClass('is-invalid');
+      });
+
+      updateProgress();
+    });
+  </script>
 </body>
 </html>
